@@ -12,10 +12,10 @@ var gameState = {
   timer: {
     twentyFiveSec: 25,
     countDown() {
-      gameState.display.timer.text(this.twentyFiveSec);
-      this.twentyFiveSec--;
-      console.log('timer.countDown', this.twentyFiveSec);
-      if(this.twentyFiveSec == 0) {
+      gameState.display.timer.text(gameState.timer.twentyFiveSec);
+      gameState.timer.twentyFiveSec--;
+      console.log('timer.countDown', gameState.timer.twentyFiveSec);
+      if(gameState.timer.twentyFiveSec == 0) {
         console.log("Time's up!");
       }
     },
