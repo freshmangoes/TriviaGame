@@ -1,3 +1,4 @@
+var intervalId;
 var gameState = {
   display: {
     timer: $(".timer-text"),
@@ -6,26 +7,6 @@ var gameState = {
     answer2: $(".answer-text-2"),
     answer3: $(".answer-text-3"),
     answer4: $(".answer-text-4"),
-    
-  },
-
-  timer: {
-    twentyFiveSec: 25,
-    countDown() {
-      gameState.display.timer.text(gameState.timer.twentyFiveSec);
-      gameState.timer.twentyFiveSec--;
-      console.log('timer.countDown', gameState.timer.twentyFiveSec);
-      if(gameState.timer.twentyFiveSec == 0) {
-        console.log("Time's up!");
-      }
-    },
-  },
-
-  update() {
-    $(document).ready(function() {
-      gameState.click();
-      setInterval(gameState.timer.countDown, 1000);
-    }); 
   },
 
   click() {
@@ -44,7 +25,29 @@ var gameState = {
     this.display.answer4.click(function() {
       console.log('Clicked answer 4');
     });
-  }
+  },
+
+  timer: {
+    twentyFive: 25,
+    decrement(){
+      time--;
+      console.log('Time', time);
+      if(time == 0){
+        console.log('Done');
+        gameState.timer.stop();
+      }
+    },
+
+    stop(){
+      clearInterval(intervalId);
+    },
+
+    run() {
+      intervalId = setInterval(this.decrement, 100);
+    }
+  },
 };
 
-gameState.update();
+var time = gameState.timer.twentyFive;
+gameState.timer.run();
+
