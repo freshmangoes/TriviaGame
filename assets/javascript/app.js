@@ -1,6 +1,15 @@
 var intervalId;
 var time;
 
+// aux functions
+// generates random index of an array
+var getRandomIndex = (array) => {
+  var min = 0;
+  var max = array.length - 1;
+  var result = Math.random() * (max - min + 1) + min;
+  return Math.floor(result);
+}
+
 var gameState = {
   display: {
     timer: $(".timer-text"),
@@ -13,20 +22,41 @@ var gameState = {
 
   questions: [
     {
-      question: "What makes up the combustion process?",
-      answer1: "Spark",
-      answer2: "Air",
-      answer3: "Fuel",
-      answer4: "All of the above",
+      q: "What makes up the combustion process?",
+      a1: "Spark",
+      a2: "Air",
+      a3: "Fuel",
+      a4: "All of the above",
+    },
+    {
+      q: "What ULTIMATELY transfers power from the engine to the wheels?",
+      a1: "Driveshaft",
+      a2: "Differential",
+      a3: "Transmission",
+      a4: "Crankshaft"
+    },
+    {
+      q: "What generates enough voltage required to create spark?",
+      a1: "Spark plugs",
+      a2: "Alternator",
+      a3: "Ignition Coil",
+      a4: "Battery"
+    },
+    {
+      q: "Where doesn't (or shouldn't) the motor oil reach?",
+      a1: "Cylinder wall",
+      a2: "Intake manifold",
+      a3: "Radiator",
+      a4: "Rod bearings"
     }
   ],
 
   populateForm(obj) {
-    gameState.display.question.text(obj.question);
-    gameState.display.answer1.text(obj.answer1);
-    gameState.display.answer2.text(obj.answer2);
-    gameState.display.answer3.text(obj.answer3);
-    gameState.display.answer4.text(obj.answer4);
+    gameState.display.question.text(obj.q);
+    gameState.display.answer1.text(obj.a1);
+    gameState.display.answer2.text(obj.a2);
+    gameState.display.answer3.text(obj.a3);
+    gameState.display.answer4.text(obj.a4);
   },
 
   // timer functions and properties
@@ -91,7 +121,9 @@ var gameState = {
     // decrementation
     gameState.display.timer.text(time);
     // get an index for a random question/answer
-    var questionInd = Math.floor(Math.random(gameState.questions.length - 0) + 0);
+    // var questionInd = Math.random() * (gameState.questions.length - 0) + 0;
+    var questionInd = getRandomIndex(gameState.questions);
+    console.log('gameState.questions.length :', gameState.questions.length);
     console.log('questionInd :', questionInd);
     // populates HTML with a question and answers
     gameState.populateForm(gameState.questions[questionInd]);
