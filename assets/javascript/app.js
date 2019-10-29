@@ -1,13 +1,17 @@
+// variables that need global scope
 var intervalId;
 var time;
+var questionInd = 0;
+
 
 // aux functions
 // generates random index of an array
-var getRandomIndex = (array) => {
-  var min = 0;
-  var max = array.length - 1;
-  var result = Math.random() * (max - min + 1) + min;
-  return Math.floor(result);
+var getNextIndex = (array) => {
+  if(questionInd < array.length-1) {
+    questionInd++;
+  } else {
+    console.log("You've run out of questions!");
+  }
 }
 
 var gameState = {
@@ -54,12 +58,12 @@ var gameState = {
       ans: "Radiator"
     }, 
     {
-      q: "",
-      a1: "",
-      a2: "",
-      a3: "",
-      a4: "",
-      ans: "",
+      q: "What does it generally mean, when coolant is in the oil or vice versa?",
+      a1: "Head gasket is hurt",
+      a2: "Crank seal crapped out",
+      a3: "Rear main seal wrecked",
+      a4: "Valve cover gasket gone",
+      ans: "Head gasket is hurt",
     },
   ],
 
@@ -96,33 +100,40 @@ var gameState = {
     // runs the timer and sets the interval that time decrements
     // currently a low value for debug purposes
     run() {
-      gameState.click();
       intervalId = setInterval(this.decrement, 1000);
+      $(".ans").click(function() {
+        var curr = $(this);
+        console.log(curr.text());
+  
+        if(curr.text() === gameState.questions[questionInd].ans) {
+          console.log("WINNER WINNER CHICKEN DINNER");
+          gameState.timer.stop();
+          alert("NICE JOB M8");
+          // gameState.nextQuestion();
+          // correct = true;
+        } else { 
+          console.log("o boyo");
+          gameState.timer.stop();
+          alert("cmon homie");
+          alert("The correct answer was: " + gameState.questions[questionInd].ans);
+        }
+        gameState.nextQuestion();
+      });
     },
   },
 
   // function to capture clicks 
   // most likely possible to make this more dry, but save that for later
   click() {
-    this.display.answer1.click(function() {
-      console.log('Clicked answer 1');
-      console.log("Answer1:", gameState.display.answer1.text());
-    });
+    
+  },
 
-    this.display.answer2.click(function() {
-      console.log('Clicked answer 2');
-      console.log("Answer2:", gameState.display.answer2.text());
-    });
-
-    this.display.answer3.click(function(){
-      console.log('Clicked answer 3');
-      console.log("Answer3:", gameState.display.answer3.text());
-    });
-
-    this.display.answer4.click(function() {
-      console.log('Clicked answer 4');
-      console.log("Answer4:", gameState.display.answer4.text());
-    });
+  nextQuestion() {
+    time = gameState.timer.timeGiven;
+    gameState.display.timer.text(time);
+    questionInd = getNextIndex(gameState.questions);
+    gameState.populateForm(gameState.questions[questionInd]);
+    gameState.timer.run();
   },
 
 
@@ -134,7 +145,6 @@ var gameState = {
     gameState.display.timer.text(time);
     // get an index for a random question/answer
     // var questionInd = Math.random() * (gameState.questions.length - 0) + 0;
-    var questionInd = getRandomIndex(gameState.questions);
     // debug
     console.log('gameState.questions.length :', gameState.questions.length);
     console.log('questionInd :', questionInd);
