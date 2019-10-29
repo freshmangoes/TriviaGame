@@ -3,6 +3,10 @@ var intervalId;
 var time;
 var questionInd = 0;
 
+// helper variables
+var newDiv = "<div>";
+var newh2 = "<h2>";
+
 
 // aux functions
 // generates random index of an array
@@ -77,14 +81,14 @@ var gameState = {
 
   populateForm(obj) {
     gameState.display.question.empty();
-    gameState.display.question.text(obj.q);
     gameState.display.answer1.empty();
-    gameState.display.answer1.text(obj.a1);
     gameState.display.answer2.empty();
-    gameState.display.answer2.text(obj.a2);
     gameState.display.answer3.empty();
-    gameState.display.answer3.text(obj.a3);
     gameState.display.answer4.empty();
+    gameState.display.question.text(obj.q);
+    gameState.display.answer1.text(obj.a1);
+    gameState.display.answer2.text(obj.a2);
+    gameState.display.answer3.text(obj.a3);
     gameState.display.answer4.text(obj.a4);
   },
 
@@ -101,21 +105,22 @@ var gameState = {
     decrement(){
       time--;
       gameState.display.timer.text(time);
-      console.log('Time', time);
+      // console.log('Time', time);
 
-      gameState.clickAnswer();
-
-      // if time is 0, time is up lol
       if(time == 0){
-        console.log('Done');
+        gameState.score.incorrectCount++;
+        console.log("Score:", gameState.score);
         gameState.timer.stop();
+        console.log("show ans");
+        gameState.showCorrectAnswer();
+        setTimeout(gameState.nextStep, 3000);
       }
     },
 
     // runs the timer and sets the interval that time decrements
     // currently a low value for debug purposes
     run() {
-      intervalId = setInterval(this.decrement, 1000);  
+      intervalId = setInterval(this.decrement, 400);  
     },
   },
 
@@ -124,25 +129,36 @@ var gameState = {
     $(".ans").unbind().click(function() {
       var curr = $(this);
       console.log("Current clicked item:", curr.text());
+
       if(curr.text() === gameState.questions[questionInd].ans) {
         console.log("WINNER WINNER CHICKEN DINNER");
         gameState.timer.stop();
         gameState.score.correctCount++;
+        gameState.congratulate();
       } else { 
         console.log("o boyo");
         gameState.timer.stop();
-        console.log("The correct answer is:", gameState.questions[questionInd].ans);
         gameState.score.incorrectCount++;
+        gameState.showCorrectAnswer();
       }
-      if(questionInd < gameState.questions.length - 1) {
-        gameState.nextQuestion();
-      } else {
-        console.log("Out of questions, dingus.");
-        gameState.showScore();
-      }
-      console.log("Correct:", gameState.score.correctCount);
-      console.log("Incorrect:", gameState.score.incorrectCount);
+
+      setTimeout(gameState.nextStep, 3000);
     });
+  },
+
+  nextStep() {
+    if($(".scores").text()) {
+      gameState.clearScores();
+    }
+
+    if(questionInd < gameState.questions.length-1) {
+      console.log("next q");
+      gameState.nextQuestion();
+    } else if(questionInd == gameState.questions.length-1) {
+      console.log("quakl");
+      gameState.showScore();
+      setTimeout(gameState.newGamePrompt, 1000);
+    }
   },
 
   nextQuestion() {
@@ -150,24 +166,38 @@ var gameState = {
     gameState.display.timer.text(time);
 
     questionInd = getNextIndex(gameState.questions);
-    console.log(JSON.stringify(gameState.questions[questionInd]));
     console.log("questionInd:", questionInd);
     gameState.populateForm(gameState.questions[questionInd]);
     gameState.timer.run();
   },
 
+  showCorrectAnswer(){
+    var correctAns = gameState.questions[questionInd].ans;
+    var str = newDiv + newh2 + "The correct answer was: " + correctAns;
+    $(".scores").append(str);
+    setTimeout(gameState.clearScores, 2000);
+  },
+
+  clearScores() {
+    $(".scores").empty();
+  },
+
+  congratulate() {
+    $(".scores").append(newDiv + newh2 + "Correct!");
+  },
+
   showScore() {
-    var newDiv = "<div>";
-    var newh2 = "<h2>";
     var scores = $(".scores");
     var strCorrect = "Correct: " + gameState.score.correctCount;
     var strIncorrect = "Incorrect: " + gameState.score.incorrectCount;
-
     scores.append(newDiv + newh2 + strCorrect);
     scores.append(newDiv + newh2 + strIncorrect);
 
-    var confirmNewGame = confirm("Would you like to start a new game?");
     
+  },
+
+  newGamePrompt() {
+    var confirmNewGame = confirm("Would you like to start a new game?");
     if(confirmNewGame) {
       gameState.newGame();
     } else {
@@ -191,6 +221,10 @@ var gameState = {
   }
 };
 
-gameState.init();
-gameState.timer.run();
+$(document).ready(function() {
+  gameState.init();
+  gameState.timer.run();
+  gameState.clickAnswer();
+});
+
 
