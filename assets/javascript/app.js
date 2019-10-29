@@ -12,6 +12,7 @@ var getNextIndex = (array) => {
     result += 1;
   } else {
     console.log("You've run out of questions!");
+    gameState.timer.stop();
   }
   return result;
 }
@@ -24,6 +25,11 @@ var gameState = {
     answer2: $(".answer-text-2"),
     answer3: $(".answer-text-3"),
     answer4: $(".answer-text-4"),
+  },
+
+  score: {
+    correctCount: 0,
+    incorrectCount: 0,
   },
 
   questions: [
@@ -97,6 +103,8 @@ var gameState = {
       gameState.display.timer.text(time);
       console.log('Time', time);
 
+      gameState.clickAnswer();
+
       // if time is 0, time is up lol
       if(time == 0){
         console.log('Done');
@@ -108,21 +116,33 @@ var gameState = {
     // currently a low value for debug purposes
     run() {
       intervalId = setInterval(this.decrement, 1000);  
-      // Had to add in the .unbind() function to make clicks only happen once      
-      $(".ans").unbind().click(function() {
-        var curr = $(this);
-        console.log("Current clicked item:", curr.text());
-        if(curr.text() === gameState.questions[questionInd].ans) {
-          console.log("WINNER WINNER CHICKEN DINNER");
-          gameState.timer.stop();
-        } else { 
-          console.log("o boyo");
-          gameState.timer.stop();
-          console.log("The correct answer is:", gameState.questions[questionInd].ans);
-        }
-        gameState.nextQuestion();
-      });
     },
+  },
+
+  clickAnswer() {
+    // Had to add in the .unbind() function to make clicks only happen once   
+    $(".ans").unbind().click(function() {
+      var curr = $(this);
+      console.log("Current clicked item:", curr.text());
+      if(curr.text() === gameState.questions[questionInd].ans) {
+        console.log("WINNER WINNER CHICKEN DINNER");
+        gameState.timer.stop();
+        gameState.score.correctCount++;
+      } else { 
+        console.log("o boyo");
+        gameState.timer.stop();
+        console.log("The correct answer is:", gameState.questions[questionInd].ans);
+        gameState.score.incorrectCount++;
+      }
+      if(questionInd < gameState.questions.length - 1) {
+        gameState.nextQuestion();
+      } else {
+        console.log("Out of questions, dingus.");
+        gameState.showScore();
+      }
+      console.log("Correct:", gameState.score.correctCount);
+      console.log("Incorrect:", gameState.score.incorrectCount);
+    });
   },
 
   nextQuestion() {
@@ -134,6 +154,33 @@ var gameState = {
     console.log("questionInd:", questionInd);
     gameState.populateForm(gameState.questions[questionInd]);
     gameState.timer.run();
+  },
+
+  showScore() {
+    var newDiv = "<div>";
+    var newh2 = "<h2>";
+    var scores = $(".scores");
+    var strCorrect = "Correct: " + gameState.score.correctCount;
+    var strIncorrect = "Incorrect: " + gameState.score.incorrectCount;
+
+    scores.append(newDiv + newh2 + strCorrect);
+    scores.append(newDiv + newh2 + strIncorrect);
+
+    var confirmNewGame = confirm("Would you like to start a new game?");
+    
+    if(confirmNewGame) {
+      gameState.newGame();
+    } else {
+      window.close();
+    }
+  },
+
+  newGame() {
+    this.score.incorrectCount = 0;
+    this.score.correctCount = 0;
+    questionInd = 0;
+    $(".scores").empty();
+    this.init();
   },
 
 
