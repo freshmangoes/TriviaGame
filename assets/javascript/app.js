@@ -7,11 +7,13 @@ var questionInd = 0;
 // aux functions
 // generates random index of an array
 var getNextIndex = (array) => {
+  var result = questionInd;
   if(questionInd < array.length-1) {
-    questionInd++;
+    result += 1;
   } else {
     console.log("You've run out of questions!");
   }
+  return result;
 }
 
 var gameState = {
@@ -68,10 +70,15 @@ var gameState = {
   ],
 
   populateForm(obj) {
+    gameState.display.question.empty();
     gameState.display.question.text(obj.q);
+    gameState.display.answer1.empty();
     gameState.display.answer1.text(obj.a1);
+    gameState.display.answer2.empty();
     gameState.display.answer2.text(obj.a2);
+    gameState.display.answer3.empty();
     gameState.display.answer3.text(obj.a3);
+    gameState.display.answer4.empty();
     gameState.display.answer4.text(obj.a4);
   },
 
@@ -100,55 +107,38 @@ var gameState = {
     // runs the timer and sets the interval that time decrements
     // currently a low value for debug purposes
     run() {
-      intervalId = setInterval(this.decrement, 1000);
+      intervalId = setInterval(this.decrement, 1000);        
       $(".ans").click(function() {
         var curr = $(this);
-        console.log(curr.text());
+        console.log("Current clicked item:", curr.text());
   
         if(curr.text() === gameState.questions[questionInd].ans) {
           console.log("WINNER WINNER CHICKEN DINNER");
           gameState.timer.stop();
-          alert("NICE JOB M8");
-          // gameState.nextQuestion();
-          // correct = true;
-        } else { 
+        } else if (curr.text() !== gameState.questions[questionInd].ans) { 
           console.log("o boyo");
           gameState.timer.stop();
-          alert("cmon homie");
-          alert("The correct answer was: " + gameState.questions[questionInd].ans);
+          console.log("The correct answer is:", gameState.questions[questionInd].ans);
         }
         gameState.nextQuestion();
       });
     },
   },
 
-  // function to capture clicks 
-  // most likely possible to make this more dry, but save that for later
-  click() {
-    
-  },
-
   nextQuestion() {
     time = gameState.timer.timeGiven;
     gameState.display.timer.text(time);
+
     questionInd = getNextIndex(gameState.questions);
+    console.log("questionInd:", questionInd);
     gameState.populateForm(gameState.questions[questionInd]);
     gameState.timer.run();
   },
 
 
   init() {
-    // initialize global variale time with user's alloted itme
     time = gameState.timer.timeGiven;
-    // set the HTML to time otherwise it will only display after the first
-    // decrementation
     gameState.display.timer.text(time);
-    // get an index for a random question/answer
-    // var questionInd = Math.random() * (gameState.questions.length - 0) + 0;
-    // debug
-    console.log('gameState.questions.length :', gameState.questions.length);
-    console.log('questionInd :', questionInd);
-    // populates HTML with a question and answers
     gameState.populateForm(gameState.questions[questionInd]);
   }
 };
