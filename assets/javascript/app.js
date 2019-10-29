@@ -27,28 +27,40 @@ var gameState = {
       a2: "Air",
       a3: "Fuel",
       a4: "All of the above",
+      ans: "All of the above",
     },
     {
       q: "What ULTIMATELY transfers power from the engine to the wheels?",
       a1: "Driveshaft",
       a2: "Differential",
       a3: "Transmission",
-      a4: "Crankshaft"
+      a4: "Crankshaft",
+      ans: "Differential",
     },
     {
       q: "What generates enough voltage required to create spark?",
       a1: "Spark plugs",
       a2: "Alternator",
       a3: "Ignition Coil",
-      a4: "Battery"
+      a4: "Battery",
+      ans: "Ignition Coil",
     },
     {
       q: "Where doesn't (or shouldn't) the motor oil reach?",
       a1: "Cylinder wall",
       a2: "Intake manifold",
       a3: "Radiator",
-      a4: "Rod bearings"
-    }
+      a4: "Rod bearings",
+      ans: "Radiator"
+    }, 
+    {
+      q: "",
+      a1: "",
+      a2: "",
+      a3: "",
+      a4: "",
+      ans: "",
+    },
   ],
 
   populateForm(obj) {
@@ -123,6 +135,7 @@ var gameState = {
     // get an index for a random question/answer
     // var questionInd = Math.random() * (gameState.questions.length - 0) + 0;
     var questionInd = getRandomIndex(gameState.questions);
+    // debug
     console.log('gameState.questions.length :', gameState.questions.length);
     console.log('questionInd :', questionInd);
     // populates HTML with a question and answers
