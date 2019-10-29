@@ -107,15 +107,15 @@ var gameState = {
     // runs the timer and sets the interval that time decrements
     // currently a low value for debug purposes
     run() {
-      intervalId = setInterval(this.decrement, 1000);        
-      $(".ans").click(function() {
+      intervalId = setInterval(this.decrement, 1000);  
+      // Had to add in the .unbind() function to make clicks only happen once      
+      $(".ans").unbind().click(function() {
         var curr = $(this);
         console.log("Current clicked item:", curr.text());
-  
         if(curr.text() === gameState.questions[questionInd].ans) {
           console.log("WINNER WINNER CHICKEN DINNER");
           gameState.timer.stop();
-        } else if (curr.text() !== gameState.questions[questionInd].ans) { 
+        } else { 
           console.log("o boyo");
           gameState.timer.stop();
           console.log("The correct answer is:", gameState.questions[questionInd].ans);
@@ -130,6 +130,7 @@ var gameState = {
     gameState.display.timer.text(time);
 
     questionInd = getNextIndex(gameState.questions);
+    console.log(JSON.stringify(gameState.questions[questionInd]));
     console.log("questionInd:", questionInd);
     gameState.populateForm(gameState.questions[questionInd]);
     gameState.timer.run();
