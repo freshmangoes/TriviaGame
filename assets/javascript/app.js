@@ -120,7 +120,7 @@ var gameState = {
     // runs the timer and sets the interval that time decrements
     // currently a low value for debug purposes
     run() {
-      intervalId = setInterval(this.decrement, 400);  
+      intervalId = setInterval(this.decrement, 1000);  
     },
   },
 
@@ -210,14 +210,15 @@ var gameState = {
     this.score.correctCount = 0;
     questionInd = 0;
     $(".scores").empty();
-    this.init();
+    gameState.init();
+    gameState.timer.run();
   },
 
 
   init() {
     time = gameState.timer.timeGiven;
     gameState.display.timer.text(time);
-    gameState.populateForm(gameState.questions[questionInd]);
+    gameState.populateForm(gameState.questions[questionInd]); 
   }
 };
 
