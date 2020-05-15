@@ -8,3 +8,6 @@ Written in vanilla HTML/CSS, Javascript, and jQuery.
 
 - setInterval() and setTimeout() are used for timer implementation. 
 - jQuery is used to dyamically render each question/answer set
+
+# Instructions  
+Clone the repo and open index.html in your web browser!
